@@ -26,4 +26,20 @@ jobs:
           ls -la
           go build .
 
- 
+  job2:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.21.x'
+          cache: true
+          cache-dependency-path: "**/*.sum"
+
+      - name: Build and Run in Glob
+        run: |
+          ls -la
+          go build .
