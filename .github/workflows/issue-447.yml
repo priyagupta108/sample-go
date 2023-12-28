@@ -43,3 +43,27 @@ jobs:
         run: |
           ls -la
           go build .
+          
+  compile_and_test:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check out code into the workspace
+      uses: actions/checkout@v3
+      
+    - name: Setup go version
+      uses: actions/setup-go@93397bea11091df50f3d7e59dc26a7711a8bcfbe # v4.1.0
+      with:
+          go-version: ${{ inputs.go-version }}
+          check-latest: ${{ inputs.go-version-latest }}
+          cache-dependency-path: ${{ inputs.working-directory }}
+      
+    - name: Get dependencies
+      run: go get -v -t -d ./...
+      
+    - name: Compile Application
+      run: go build -v ./...
+      
+    - name: Run Tests
+      run: go test -v ./...      
+
+
