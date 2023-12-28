@@ -21,7 +21,7 @@ jobs:
             go.sum 
             go.mod
 
-      - name: Build and Run in List
+      - name: Build and Run in job1
         run: |
           ls -la
           go build .
@@ -39,7 +39,7 @@ jobs:
           cache: true
           cache-dependency-path: "**/*.sum"
 
-      - name: Build and Run in Glob
+      - name: Build and Run in job2
         run: |
           ls -la
           go build .
