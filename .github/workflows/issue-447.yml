@@ -5,19 +5,7 @@ on:
   push:
   pull_request:
   workflow_dispatch:
-   inputs:
-      go-version:
-        description: 'Go version'
-        required: true
-        default: '1.21.x'
-      go-version-latest:
-        description: 'Check latest Go version'
-        required: true
-        default: 'false'
-      working-directory:
-        description: 'Working directory'
-        required: true
-        default: './'
+   
 
 jobs:
   job1:
