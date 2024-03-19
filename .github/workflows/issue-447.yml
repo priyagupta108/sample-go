@@ -12,10 +12,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Setup Go
-        uses: actions/setup-go@v4
+        uses: actions/setup-go@dependabot/npm_and_yarn/undici-5.28.3
         with:
           go-version: '1.21.x'
           cache: true
@@ -32,10 +32,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Setup Go
-        uses: actions/setup-go@v4
+        uses: actions/setup-go@dependabot/npm_and_yarn/undici-5.28.3
         with:
           go-version: '1.21.x'
           cache: true
@@ -50,10 +50,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Check out code into the workspace
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       
     - name: Setup go version
-      uses: actions/setup-go@93397bea11091df50f3d7e59dc26a7711a8bcfbe # v4.1.0
+      uses: actions/setup-go@dependabot/npm_and_yarn/undici-5.28.3 # v4.1.0
       with:
           go-version: '1.21.x'
           cache: true
