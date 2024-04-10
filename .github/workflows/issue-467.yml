@@ -1,6 +1,6 @@
 name: Caller
 on:
-  workflow_dispatch:
+  push:
 jobs:
   Test:
     runs-on: ubuntu-latest
