@@ -15,7 +15,7 @@ jobs:
           go-version: 1.23.x
 
       - name: Build shared library
-        run: go build -o lib.so -buildmode=c-shared
+        run: go build -o lib.so -buildmode=c-shared -ldflags="-s -w"
 
       - name: Test shared library
         run: python run.py
