@@ -5,7 +5,7 @@ import sys
 import time
 
 curr_dir = os.path.dirname(__file__)
-default_lib_path = os.path.join(curr_dir, "builds/lib.so.local")
+default_lib_path = os.path.join(curr_dir, "builds/liblocal.so")
 lib_path = os.environ.get("RUNPY_LIB_PATH", default_lib_path)
 lib = ctypes.cdll.LoadLibrary(lib_path)
 
