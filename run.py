@@ -4,7 +4,7 @@ import os
 
 # Load the shared library from an environment variable
 lib_path = os.getenv('RUNPY_LIB_PATH', './lib.so')
-lib = ctypes.CDLL(lib_path)
+lib = ctypes.cdll.LoadLibrary(lib_path)
 
 # Start timing
 start_time = time.time()
