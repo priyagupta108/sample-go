@@ -1,20 +1,19 @@
 import ctypes
-import os
-import os.path
-import sys
 import time
+import os
 
-curr_dir = os.path.dirname(__file__)
-default_lib_path = os.path.join(curr_dir, "builds/liblocal.so")
-lib_path = os.environ.get("RUNPY_LIB_PATH", default_lib_path)
-lib = ctypes.cdll.LoadLibrary(lib_path)
+# Load the shared library from an environment variable
+lib_path = os.getenv('RUNPY_LIB_PATH', './lib.so')
+lib = ctypes.CDLL(lib_path)
 
-lib.cNoop.argtypes = []
-lib.cNoop.restype = ctypes.c_void_p
+# Start timing
+start_time = time.time()
 
-started = time.time()
-for i in range(1000000):
+# Call cNoop 1 million times
+for _ in range(1000000):
     lib.cNoop()
 
-took = time.time() - started
-print(f'made {i + 1} calls in {took:.2f}s', file=sys.stderr)
+# End timing
+end_time = time.time()
+
+print(f"Made 1000000 calls in {end_time - start_time:.2f}s")
