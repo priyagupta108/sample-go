@@ -16,7 +16,7 @@ jobs:
       - name: Install Go
         uses: actions/setup-go@v5
         with:
-          go-version: 1.23.x
+          go-version: 1.22.5
 
       - name: Build shared library
         run: go build -o lib.so -buildmode=c-shared
