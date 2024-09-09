@@ -27,5 +27,5 @@ jobs:
       - name: Save shared library as an artifact
         uses: actions/upload-artifact@v4
         with:
-          name: lib.so
+          name: lib-${{ matrix.os }}
           path: lib.so
