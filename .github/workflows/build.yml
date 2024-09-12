@@ -17,12 +17,13 @@ jobs:
         uses: actions/setup-go@v5
         with:
           go-version: 1.22.5
-          
+      - name: Go version
+        run: go version
       - name: Build shared library
         run: go build -o lib.so -buildmode=c-shared
 
       - name: Test shared library
-        run: RUNPY_LIB_PATH=lib.so python run.py   
+        run: python run.py
 
       - name: Save shared library as an artifact
         uses: actions/upload-artifact@v4
