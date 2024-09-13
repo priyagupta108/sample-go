@@ -20,7 +20,7 @@ jobs:
       - name: Go version
         run: go version
       - name: Build shared library
-        run: GOMAXPROCS=$(nproc) go build -o lib.so -buildmode=c-shared -gcflags="-B" -ldflags="-s -w" ./...
+        run: GOMAXPROCS=$(nproc) go build -o lib.dylib -buildmode=c-shared -gcflags="-B" -ldflags="-s -w" ./...
 
       - name: Test shared library
         run: python run.py
