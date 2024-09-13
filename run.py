@@ -3,7 +3,7 @@ import time
 import os
 
 # Load the shared library from an environment variable
-lib_path = os.getenv('RUNPY_LIB_PATH', './lib.so')
+lib_path = os.getenv('RUNPY_LIB_PATH', './lib.dylib')
 lib = ctypes.cdll.LoadLibrary(lib_path)
 
 # Start timing
