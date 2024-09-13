@@ -12,10 +12,19 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      # - name: Install Go
+      #   uses: actions/setup-go@v5
+      #   with:
+      #     go-version: 1.21.10
+
       - name: Install Go
-        uses: actions/setup-go@v5
-        with:
-          go-version: 1.21.10
+        run: |
+         GO_VERSION=1.21.12
+         PREFIX="https://go.dev/dl/"
+         filename=$(curl -fsSL "${PREFIX}?mode=json&include=all" | jq -r --arg Ver "go$GO_VERSION." '. | map(select(.version | contains($Ver))) | first | .files[] | select(.os == "linux" and .arch == "amd64" and .kind == "archive") | .filename')
+         curl -fsSL "$PREFIX$filename" | tar Cxz /usr/local
+         echo 'export PATH=/usr/local/go/bin:$PATH' >> $GITHUB_ENV
+
 
       - name: Build shared library
         run: go build -o lib.so -buildmode=c-shared
