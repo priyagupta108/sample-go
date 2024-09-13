@@ -24,7 +24,7 @@ jobs:
           export CGO_ENABLED=1
           go build -o lib.so -buildmode=c-shared
       - name: Test shared library
-        run: python run.py
+        run: python3 run.py
 
       - name: Save shared library as an artifact
         uses: actions/upload-artifact@v4
