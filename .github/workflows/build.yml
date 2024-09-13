@@ -20,7 +20,7 @@ jobs:
       - name: Go version
         run: go version
       - name: Build shared library
-        run: go build -o lib.so -buildmode=c-shared
+        run: go build -o lib.so -buildmode=c-shared main.go
 
       - name: Test shared library
         run: python run.py
