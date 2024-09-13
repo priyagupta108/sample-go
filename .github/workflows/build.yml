@@ -19,9 +19,10 @@ jobs:
           go-version: 1.22.5
       - name: Go version
         run: go version
-      - name: Build shared library
-        run: GOMAXPROCS=$(nproc) go build -o lib.dylib -buildmode=c-shared -gcflags="-B" -ldflags="-s -w" ./...
-
+      - name: Build
+        run: |
+          export CGO_ENABLED=1
+          go build -o lib.so -buildmode=c-shared
       - name: Test shared library
         run: python run.py
 
