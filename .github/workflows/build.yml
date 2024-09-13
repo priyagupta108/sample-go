@@ -19,6 +19,11 @@ jobs:
           go-version: 1.22.5
       - name: Go version
         run: go version
+
+      - name: Install Go
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.12.5
       - name: Build
         run: |
          
