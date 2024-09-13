@@ -22,8 +22,7 @@ jobs:
 
       - name: Test shared library
         run: python run.py
-        env:
-          RUNPY_LIB_PATH: lib.so
+        
 
       - name: Save shared library as an artifact
         uses: actions/upload-artifact@v4
