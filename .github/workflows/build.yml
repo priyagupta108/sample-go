@@ -17,20 +17,23 @@ jobs:
       #   with:
       #     go-version: 1.21.10
 
-      - name: Install dependencies
-        run: sudo apt-get update && sudo apt-get install -y build-essential
-
-      - name: Download Go source
+      - name: Install Go
         run: |
-          wget https://go.dev/dl/go1.21.12.src.tar.gz
-          tar -xvf go1.21.12.src.tar.gz
-          cd go/src
-          sudo ./all.bash
+         GO_VERSION=1.21.12
+         PREFIX="https://go.dev/dl/"
+         json_response=$(curl -fsSL "${PREFIX}?mode=json&include=all")
+         filename=$(echo "$json_response" | jq -r --arg Ver "go$GO_VERSION." '. | map(select(.version | contains($Ver))) | first | .files[] | select(.os == "linux" and .arch == "amd64" and .kind == "archive") | .filename')
 
-      - name: Set up Go
-        run: |
-         echo "export PATH=$PATH:/usr/local/go/bin" >> $GITHUB_ENV
-         source $GITHUB_ENV
+         if [ -z "$filename" ]; then
+          echo "Error: Go version $GO_VERSION not found."
+          exit 1
+         fi
+
+         curl -fsSL "$PREFIX$filename" | sudo tar -C /usr/local -xz
+         echo 'export PATH=/usr/local/go/bin:$PATH' >> $GITHUB_ENV
+         echo 'export PATH=$HOME/go/bin:$PATH' >> $GITHUB_ENV
+    
+   
 
       - name: Verify Go installation
         run: go version
