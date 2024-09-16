@@ -17,13 +17,23 @@ jobs:
       #   with:
       #     go-version: 1.21.10
 
-      - name: Install Go
+      - name: Install dependencies
+        run: sudo apt-get update && sudo apt-get install -y build-essential
+
+      - name: Download Go source
         run: |
-         GO_VERSION=1.21.12
-         PREFIX="https://go.dev/dl/"
-         filename=$(curl -fsSL "${PREFIX}?mode=json&include=all" | jq -r --arg Ver "go$GO_VERSION." '. | map(select(.version | contains($Ver))) | first | .files[] | select(.os == "linux" and .arch == "amd64" and .kind == "archive") | .filename')
-         curl -fsSL "$PREFIX$filename" | tar Cxz /usr/local
-         echo 'export PATH=/usr/local/go/bin:$PATH' >> $GITHUB_ENV
+          wget https://go.dev/dl/go1.21.12.src.tar.gz
+          tar -xvf go1.21.12.src.tar.gz
+          cd go/src
+          sudo ./all.bash
+
+      - name: Set up Go
+        run: |
+         echo "export PATH=$PATH:/usr/local/go/bin" >> $GITHUB_ENV
+         source $GITHUB_ENV
+
+      - name: Verify Go installation
+        run: go version
 
 
       - name: Build shared library
