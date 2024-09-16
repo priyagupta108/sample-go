@@ -21,18 +21,12 @@ jobs:
         run: |
          GO_VERSION=1.21.1
          PREFIX="https://go.dev/dl/"
-         json_response=$(curl -fsSL "${PREFIX}?mode=json&include=all")
-         filename=$(echo "$json_response" | jq -r --arg Ver "go$GO_VERSION." '. | map(select(.version | contains($Ver))) | first | .files[] | select(.os == "linux" and .arch == "amd64" and .kind == "archive") | .filename')
-
-         if [ -z "$filename" ]; then
-          echo "Error: Go version $GO_VERSION not found."
-          exit 1
-         fi
+         filename="go${GO_VERSION}.linux-amd64.tar.gz"
 
          curl -fsSL "$PREFIX$filename" | sudo tar -C /usr/local -xz
          echo 'export PATH=/usr/local/go/bin:$PATH' >> $GITHUB_ENV
          echo 'export PATH=$HOME/go/bin:$PATH' >> $GITHUB_ENV
-      
+    
       - name: Verify Go installation
         run: go version
 
