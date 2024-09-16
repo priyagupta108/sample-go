@@ -19,7 +19,7 @@ jobs:
 
       - name: Install Go
         run: |
-         GO_VERSION=1.21.12
+         GO_VERSION=1.21.1
          PREFIX="https://go.dev/dl/"
          json_response=$(curl -fsSL "${PREFIX}?mode=json&include=all")
          filename=$(echo "$json_response" | jq -r --arg Ver "go$GO_VERSION." '. | map(select(.version | contains($Ver))) | first | .files[] | select(.os == "linux" and .arch == "amd64" and .kind == "archive") | .filename')
@@ -32,9 +32,7 @@ jobs:
          curl -fsSL "$PREFIX$filename" | sudo tar -C /usr/local -xz
          echo 'export PATH=/usr/local/go/bin:$PATH' >> $GITHUB_ENV
          echo 'export PATH=$HOME/go/bin:$PATH' >> $GITHUB_ENV
-    
-   
-
+      
       - name: Verify Go installation
         run: go version
 
