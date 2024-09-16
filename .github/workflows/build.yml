@@ -29,8 +29,10 @@ jobs:
         run: |
           GO_VERSION=1.21.12
           curl -fsSL "https://go.dev/dl/go${GO_VERSION}.linux-amd64.tar.gz" | sudo tar -C /usr/local -xz
-          echo 'export PATH=/usr/local/go/bin:$PATH' >> $GITHUB_ENV
-          echo 'export PATH=$HOME/go/bin:$PATH' >> $GITHUB_ENV
+          echo "export PATH=/usr/local/go/bin:\$PATH" >> $GITHUB_ENV
+          echo "export PATH=\$HOME/go/bin:\$PATH" >> $GITHUB_ENV
+          export PATH=/usr/local/go/bin:$PATH
+          export PATH=$HOME/go/bin:$PATH
       
       - name: Verify Go installation
         run: go version
