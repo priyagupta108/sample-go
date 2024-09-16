@@ -19,7 +19,7 @@ jobs:
 
       - name: Manually Install Go
         run: |
-          GO_VERSION='1.17'
+          GO_VERSION='1.22.5'
           wget https://dl.google.com/go/go${GO_VERSION}.linux-amd64.tar.gz
           sudo tar -xvf go${GO_VERSION}.linux-amd64.tar.gz -C /usr/local
           echo "GOROOT=/usr/local/go" >> $GITHUB_ENV
