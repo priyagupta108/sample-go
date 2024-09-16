@@ -12,10 +12,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # - name: Install Go
-      #   uses: actions/setup-go@v5
-      #   with:
-      #     go-version: 1.21.10
+      - name: Install Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: 1.21.13
       # - name: Remove existing Go installation
       #   run: |
       #    sudo rm -rf /usr/local/go
@@ -23,14 +23,14 @@ jobs:
       #    sudo rm -rf /usr/local/bin/gofmt
       #     sudo rm -rf /usr/bin/go
       #     sudo rm -rf /usr/bin/gofmt
-      - name: Manually Install Go
-        run: |
-          GO_VERSION='1.21.13'
-          wget https://dl.google.com/go/go${GO_VERSION}.linux-amd64.tar.gz
-          sudo tar -xvf go${GO_VERSION}.linux-amd64.tar.gz -C /usr/local
-          echo "GOROOT=/usr/local/go" >> $GITHUB_ENV
-          echo "/usr/local/go/bin" >> $GITHUB_PATH
-          go version
+      # - name: Manually Install Go
+      #   run: |
+      #     GO_VERSION='1.21.13'
+      #     wget https://dl.google.com/go/go${GO_VERSION}.linux-amd64.tar.gz
+      #     sudo tar -xvf go${GO_VERSION}.linux-amd64.tar.gz -C /usr/local
+      #     echo "GOROOT=/usr/local/go" >> $GITHUB_ENV
+      #     echo "/usr/local/go/bin" >> $GITHUB_PATH
+      #     go version
             
       - name: Verify Go installation
         run: go version
