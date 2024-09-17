@@ -7,26 +7,20 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        go-version: [1.22.5, 1.22.6, 1.22.7, 1.21.12, 1.21.13, 1.23.1]
+        go-version: [1.19.13, 1.20.14, 1.21.10, 1.21.11, 1.22.3, 1.22.4]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install Go ${{ matrix.go-version }}
-        uses: actions/setup-go@v5
-        with:
-          go-version: ${{ matrix.go-version }}
-      - name: Remove existing Go installation
+      # - name: Install Go ${{ matrix.go-version }}
+      #   uses: actions/setup-go@v5
+      #   with:
+      #     go-version: ${{ matrix.go-version }}
+     
+      - name: Manually Install Go ${{ matrix.go-version }}
         run: |
-           sudo rm -rf /usr/local/go
-           sudo rm -rf /usr/local/bin/go
-           sudo rm -rf /usr/local/bin/gofmt
-           sudo rm -rf /usr/bin/go
-           sudo rm -rf /usr/bin/gofmt
-      - name: Manually Install Go
-        run: |
-          GO_VERSION='1.21.13'
+          GO_VERSION=${{ matrix.go-version }}
           wget https://dl.google.com/go/go${GO_VERSION}.linux-amd64.tar.gz
           sudo tar -xvf go${GO_VERSION}.linux-amd64.tar.gz -C /usr/local
           echo "GOROOT=/usr/local/go" >> $GITHUB_ENV
