@@ -1,5 +1,12 @@
-module mywebapp
+module example-mod
 
-go 1.21
+go 1.21.0
 
-require github.com/gorilla/mux v1.8.1 // indirect
+toolchain go1.21.1
+
+require golang.org/x/tools v0.13.0
+
+require (
+	golang.org/x/mod v0.12.0 // indirect
+	golang.org/x/sys v0.12.0 // indirect
+)
