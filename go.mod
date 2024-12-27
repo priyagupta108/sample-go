@@ -1,6 +1,6 @@
 module example-mod
 
-go 1.24.0-rc.1
+go '1.24.0-rc.1'
 
 
 
