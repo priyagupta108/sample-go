@@ -11,13 +11,11 @@ jobs:
     runs-on: self-hosted
     steps:
       - uses: actions/checkout@v4
-      - name: Print Environment Variable
+      - name: Echo environment variables using PowerShell
         run: |
-          echo 'package main' > print_env.go
-          echo 'import ("fmt"; "os")' >> print_env.go
-          echo 'func main() { envVar := os.Getenv("HTTP_PORT"); fmt.Println(envVar) }' >> print_env.go
-          go run print_env.go
-        shell: cmd
+          echo "=== Print Environment Variables in PowerShell ==="
+          Get-ChildItem Env:
+
         
       - name: Set up Go
         uses: actions/setup-go@v5
