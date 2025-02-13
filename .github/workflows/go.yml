@@ -12,7 +12,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Print AGENT_ISSELFHOSTED
-        run: echo "AGENT_ISSELFHOSTED=$AGENT_ISSELFHOSTED"
+        run: echo "AGENT_ISSELFHOSTED=$RUNNER_ENVIRONMENT"
        
         
       - name: Set up Go
