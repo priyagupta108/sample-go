@@ -11,9 +11,10 @@ jobs:
     runs-on: self-hosted
     steps:
       - uses: actions/checkout@v4
-      - name: Print AGENT_ISSELFHOSTED
-        run: echo "AGENT_ISSELFHOSTED=$RUNNER_ENVIRONMENT"
-       
+      - name: Print Environment Variables
+        run: |
+          @echo off
+          set
         
       - name: Set up Go
         uses: actions/setup-go@v5
