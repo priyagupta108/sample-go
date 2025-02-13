@@ -12,7 +12,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Print AGENT_ISSELFHOSTED
-        run: printenv
+        run: echo "AGENT_ISSELFHOSTED=$AGENT_ISSELFHOSTED"
+       
         
       - name: Set up Go
         uses: actions/setup-go@v5
