@@ -8,13 +8,13 @@ jobs:
     strategy:
       matrix:
         version: ["1.17", "1.18", "1.20"]
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Echo environment variables using PowerShell
-        run: |
-          echo "=== Print Environment Variables in PowerShell ==="
-          Get-ChildItem Env:
+      # - name: Echo environment variables using PowerShell
+      #   run: |
+      #     echo "=== Print Environment Variables in PowerShell ==="
+      #     Get-ChildItem Env:
 
         
       - name: Set up Go
