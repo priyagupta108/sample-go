@@ -7,10 +7,14 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [windows-latest, windows-2019, self-hosted, ubuntu-latest, ubuntu-22.04, macos-latest, macos-13]
+        os: [windows-latest, windows-2019, self-hosted]
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v4
+    - name: Echo environment variables using PowerShell
+      run: |
+          echo "=== Print Environment Variables in PowerShell ==="
+          Get-ChildItem Env:
     - name: setup-go 
       uses: priyagupta108/setup-go@selfhosted-validation
       with:
