@@ -9,17 +9,16 @@ jobs:
   setup-go:
     runs-on: ubuntu-latest
     steps:
-      - name: Dump GitHub context
-        env:
-          GITHUB_CONTEXT: ${{ toJson(github) }}
-        run: echo "$GITHUB_CONTEXT"
+      # - name: Dump GitHub context
+      #   env:
+      #     GITHUB_CONTEXT: ${{ toJson(github) }}
+      #   run: echo "$GITHUB_CONTEXT"
       - name: Checkout
         uses: actions/checkout@v4
       - name: Setup Go
-       
-        uses: actions/setup-go@v4
+        uses: actions/setup-go@v5
         with:
-          go-version-file: 'go.mod'
+          go-version-file: '1.17'
       - name: go version
         run: go version
       - name: Run app
