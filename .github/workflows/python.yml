@@ -15,7 +15,8 @@ jobs:
 
       - name: Run validation composite action
       
-        uses: priyagupta108/sample-python@v1.1.0
+        uses: priyagupta108/sample-python@v1
+        
         # Uncomment and edit below if the action expects inputs
         # with:
         #   some-input: value
