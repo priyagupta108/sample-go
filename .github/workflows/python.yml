@@ -14,6 +14,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Run validation composite action
+      
         uses: priyagupta108/sample-python@v1.1.0
         # Uncomment and edit below if the action expects inputs
         # with:
