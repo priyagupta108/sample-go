@@ -1,11 +1,11 @@
 package main
 
 import (
-	"C"
+    "fmt"
+    "github.com/google/uuid"
 )
 
-//export cNoop
-func cNoop() {
+func main() {
+    id := uuid.New()
+    fmt.Println("Generated UUID:", id)
 }
-
-func main() {}
