@@ -2,17 +2,10 @@ package main
 
 import (
     "fmt"
-    "net/http"
-    "github.com/gorilla/mux"
+    "github.com/google/uuid"
 )
 
 func main() {
-    r := mux.NewRouter()
-
-    r.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-    
-        fmt.Fprintf(w, "Hello, Web!")
-    })
-    http.Handle("/", r)
-    http.ListenAndServe(":8080", nil)
+    id := uuid.New()
+    fmt.Println("Generated UUID:", id)
 }
