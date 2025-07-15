@@ -1,8 +1,7 @@
-name: Test Go Versions
+name: Test Go with self-hosted
 
 on:
   push:
-    
 jobs:
   test:
     runs-on: self-hosted
