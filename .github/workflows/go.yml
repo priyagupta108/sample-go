@@ -1,8 +1,7 @@
 name: Test 403
 on: [push, pull_request]
 
-permissions:
-  contents: read
+
 
 jobs:
   build:
