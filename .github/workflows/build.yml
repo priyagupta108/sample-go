@@ -10,11 +10,7 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Set correct permissions for cache directories
-      run: |
-      
-        chmod -R 0700 ~/go/pkg/mod
-        chmod -R 0700 ~/.cache/go-build
+  
 
     - name: Set up Go
       uses: actions/setup-go@v5
