@@ -12,8 +12,10 @@ jobs:
 
     - name: Set correct permissions for cache directories
       run: |
-        chmod -R 0755 ~/go/pkg/mod 
-        chmod -R 0755 ~/.cache/go-build 
+        # chmod -R 0755 ~/go/pkg/mod 
+        # chmod -R 0755 ~/.cache/go-build 
+        chmod -R 0700 ~/go/pkg/mod
+        chmod -R 0700 ~/.cache/go-build
 
     - name: Set up Go
       uses: actions/setup-go@v5
@@ -34,6 +36,9 @@ jobs:
     #     key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
     #     restore-keys: |
     #       ${{ runner.os }}-go-
+
+
+    
 
     - name: Install dependencies
       run: go mod tidy
