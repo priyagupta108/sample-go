@@ -1,5 +1,4 @@
 name: Setup GO
-
 on: push
 
 jobs:
