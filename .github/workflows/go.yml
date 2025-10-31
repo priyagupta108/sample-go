@@ -9,7 +9,9 @@ jobs:
       matrix:
         test: [ '1', '2' ]
     name: Test Job
-    steps:
+    steps: 
+      - name: Checkout code
+        uses: actions/checkout@v5
       - name: Setup go
         uses: actions/setup-go@v6
       - run: echo "matrix run ${{ matrix.test }}"
