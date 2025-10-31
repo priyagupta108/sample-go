@@ -7,28 +7,40 @@ on:
   
   
 jobs:
-  test:    
+  # test:    
+  #   strategy:
+  #     matrix:
+  #       version: ['oldstable', 'stable']
+  #       runner: [windows-11-arm, ubuntu-22.04-arm, ubuntu-24.04-arm, ubuntu-latest, macos-latest, macos-13, windows-latest]
+  #       i: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] # Adjust this to increase the number of parallel jobs
+
+
+  #   runs-on: ${{matrix.runner}}
+  #   env:
+  #     ACTIONS_RUNNER_DEBUG: true
+  #     ACTIONS_STEP_DEBUG: true
+  #   steps:
+  #   - name: Checkout 
+  #     uses: actions/checkout@v4
+  #   - name: Setup go
+  #     #uses: actions/setup-go@v5
+  #     uses: priyagupta108/setup-go@fix-manifest-error-handling
+  #     with:
+  #       go-version: ${{matrix.version}}
+
+
+  #   - name: Check rate limit
+  #     run: |
+  #       curl -i https://api.github.com/rate_limit  
+
+
+  build:
+    runs-on: ubuntu-latest
     strategy:
       matrix:
-        version: ['oldstable', 'stable']
-        runner: [windows-11-arm, ubuntu-22.04-arm, ubuntu-24.04-arm, ubuntu-latest, macos-latest, macos-13, windows-latest]
-        i: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] # Adjust this to increase the number of parallel jobs
-
-
-    runs-on: ${{matrix.runner}}
-    env:
-      ACTIONS_RUNNER_DEBUG: true
-      ACTIONS_STEP_DEBUG: true
+        test: [ '1', '2' ]
+    name: Test Job
     steps:
-    - name: Checkout 
-      uses: actions/checkout@v4
-    - name: Setup go
-      #uses: actions/setup-go@v5
-      uses: priyagupta108/setup-go@fix-manifest-error-handling
-      with:
-        go-version: ${{matrix.version}}
-
-
-    - name: Check rate limit
-      run: |
-        curl -i https://api.github.com/rate_limit  
+      - name: Setup go
+        uses: actions/setup-go@v6
+      - run: echo "matrix run ${{ matrix.test }}"
