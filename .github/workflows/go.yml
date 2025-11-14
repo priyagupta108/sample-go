@@ -27,7 +27,10 @@ jobs:
           go-version: '1.24'
           cache: false
       - name: Set IMAGE_OS environment variable
-        run: echo "IMAGE_OS=$ImageOS" >> $GITHUB_ENV    
+        run: echo "IMAGE_OS=$ImageOS" >> $GITHUB_ENV 
+      - name: Save lowercase arch
+        run: echo "ARCH_LOWER=$(echo ${{ runner.arch }} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
+
       - name: Restore Go cache
         uses: actions/cache/restore@v4
         id: go-cache
