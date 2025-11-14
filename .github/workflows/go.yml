@@ -32,9 +32,10 @@ jobs:
           path: |
             $GOMODCACHE
             $GOCACHE
-          key: setup-go-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('**/go.sum') }}
+          key: setup-go-${{ runner.os }}-${{ runner.arch }}-${{ runner.image }}-go-${{ steps.setup-go.outputs.go-version }}-${{ hashFiles('**/go.sum') }}
           restore-keys: |
-            setup-go-${{ runner.os }}-
+              setup-go-${{ runner.os }}-${{ runner.arch }}-${{ runner.image }}-go-${{ steps.setup-go.outputs.go-version }}-
+              setup-go-
       - name: Download modules
         run: go mod download
       - name: Build
