@@ -21,10 +21,13 @@ jobs:
     steps:
       - uses: actions/checkout@v5
       - name: Setup Go
+        id: setup-go
         uses: actions/setup-go@v6
         with:
           go-version: '1.21'
           cache: false
+      - name: Set IMAGE_OS environment variable
+        run: echo "IMAGE_OS=$ImageOS" >> $GITHUB_ENV    
       - name: Restore Go cache
         uses: actions/cache/restore@v4
         id: go-cache
@@ -32,7 +35,7 @@ jobs:
           path: |
             $GOMODCACHE
             $GOCACHE
-          key: setup-go-${{ runner.os }}-${{ runner.arch }}-${{ runner.image }}-go-${{ steps.setup-go.outputs.go-version }}-${{ hashFiles('**/go.sum') }}
+          key: setup-go-${{ runner.os }}-${{ runner.arch }}-${{ env.IMAGE_OS }}-go-${{ steps.setup-go.outputs.go-version }}-${{ hashFiles('**/go.sum') }}
           restore-keys: |
               setup-go-${{ runner.os }}-${{ runner.arch }}-${{ runner.image }}-go-${{ steps.setup-go.outputs.go-version }}-
               setup-go-
