@@ -29,7 +29,7 @@ jobs:
       - name: Set IMAGE_OS environment variable
         run: echo "IMAGE_OS=$ImageOS" >> $GITHUB_ENV 
       - name: Save lowercase arch
-        run: echo "ARCH_LOWER=$(echo ${{ runner.arch }} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
+        run: echo "ARCH=$(echo ${{ runner.arch }} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
 
       - name: Restore Go cache
         uses: actions/cache/restore@v4
@@ -38,9 +38,9 @@ jobs:
           path: |
             $GOMODCACHE
             $GOCACHE
-          key: setup-go-${{ runner.os }}-${{ runner.arch }}-${{ env.IMAGE_OS }}-go-${{ steps.setup-go.outputs.go-version }}-${{ hashFiles('**/go.sum') }}
+          key: setup-go-${{ runner.os }}-${{ env.ARCH }}-${{ env.IMAGE_OS }}-go-${{ steps.setup-go.outputs.go-version }}-${{ hashFiles('**/go.sum') }}
           restore-keys: |
-              setup-go-${{ runner.os }}-${{ runner.arch }}-${{ runner.image }}-go-${{ steps.setup-go.outputs.go-version }}-
+              setup-go-${{ runner.os }}-${{ env.ARCH }}-${{ env.IMAGE_OS }}-go-${{ steps.setup-go.outputs.go-version }}-
               setup-go-
       - name: Download modules
         run: go mod download
