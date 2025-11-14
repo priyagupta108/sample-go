@@ -38,6 +38,7 @@ jobs:
           path: |
               ~/.cache/go-build
               ~/go/pkg/mod
+              
           key: setup-go-${{ runner.os }}-${{ env.ARCH }}-${{ env.IMAGE_OS }}-go-${{ steps.setup-go.outputs.go-version }}-${{ hashFiles('**/go.sum') }}
           restore-keys: |
               setup-go-${{ runner.os }}-${{ env.ARCH }}-${{ env.IMAGE_OS }}-go-${{ steps.setup-go.outputs.go-version }}-
