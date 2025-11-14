@@ -24,7 +24,7 @@ jobs:
         id: setup-go
         uses: actions/setup-go@v6
         with:
-          go-version: '1.21'
+          go-version: '1.24'
           cache: false
       - name: Set IMAGE_OS environment variable
         run: echo "IMAGE_OS=$ImageOS" >> $GITHUB_ENV    
