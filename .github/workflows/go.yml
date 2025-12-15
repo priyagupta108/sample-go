@@ -114,7 +114,7 @@ jobs:
           path: |
             ${{ env.GO_MOD_CACHE }}
             ${{ env.GO_BUILD_CACHE }}
-          key: setup-go-${{ runner.os }}-${{ env.ARCH }}-${{ env.CACHE_OS_SUFFIX }}go-${{ steps.setup-go.outputs.go-version }}-${{ hashFiles('**/go.sum') }}
+          key: setup-go-${{ runner.os }}-${{ runner.arch }}-${{ env.CACHE_OS_SUFFIX }}go-${{ steps.setup-go.outputs.go-version }}-${{ hashFiles('**/go.sum') }}
       # - name: Setup Go
       #   id: setup-go
       #   uses: actions/setup-go@v6
