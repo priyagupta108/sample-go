@@ -93,12 +93,12 @@ jobs:
         if: runner.os != 'Windows'
         run: echo "ARCH=$(echo '${{ runner.arch }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
 
-      - name: Save lowercase arch (Windows)
-        if: runner.os == 'Windows'
-        shell: pwsh
-        run: |
-          $arch = "${{ runner.arch }}".ToLower()
-          echo "ARCH=$arch" | Out-File $env:GITHUB_ENV -Append
+      # - name: Save lowercase arch (Windows)
+      #   if: runner.os == 'Windows'
+      #   shell: pwsh
+      #   run: |
+      #     $arch = "${{ runner.arch }}".ToLower()
+      #     echo "ARCH=$arch" | Out-File $env:GITHUB_ENV -Append
       - name: Set cache OS suffix (Ubuntu only)
         if: runner.os == 'Linux'
         run: echo "CACHE_OS_SUFFIX=$ImageOS-" >> $GITHUB_ENV
