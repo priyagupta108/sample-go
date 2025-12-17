@@ -32,6 +32,7 @@ permissions:
 jobs:
   test:
     strategy:
+      fail-fast: false 
       max-parallel: 16
       matrix:
         os: [macos, ubuntu, windows]
@@ -46,6 +47,7 @@ jobs:
           - os: windows
             gopath: C:\Users\runneradmin\go
             gocache: C:\Users\runneradmin\AppData\Local\go-build
+
     name: ${{ matrix.os }} @ Go ${{ matrix.go }}
     runs-on: ${{ matrix.os }}-latest
     env:
@@ -62,6 +64,12 @@ jobs:
       - uses: actions/checkout@v4
         with:
           path: ${{ env.WORKDIR }}
+      - name: Ensure Go paths exist (Windows)
+        if: matrix.os == 'windows'
+        run: |
+          mkdir "${{ matrix.gopath }}"
+          mkdir "${{ github.workspace }}"
+        shell: pwsh
       - uses: actions/setup-go@v6
         with:
           go-version: ${{ matrix.go }}
