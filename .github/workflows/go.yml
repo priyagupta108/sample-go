@@ -67,8 +67,8 @@ jobs:
       - name: Ensure Go paths exist (Windows)
         if: matrix.os == 'windows'
         run: |
-          mkdir "${{ matrix.gopath }}"
-          mkdir "${{ github.workspace }}"
+          mkdir -Force "${{ matrix.gopath }}"
+          mkdir -Force "${{ github.workspace }}"
         shell: pwsh
       - uses: actions/setup-go@v6
         with:
