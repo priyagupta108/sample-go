@@ -74,3 +74,4 @@ jobs:
         with:
           go-version: ${{ matrix.go }}
           cache: false
+          shell: pwsh
