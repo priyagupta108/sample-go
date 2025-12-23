@@ -52,7 +52,7 @@ jobs:
     runs-on: ${{ matrix.os }}-latest
     env:
       GO111MODULE: ${{ matrix.go < '1.22' && 'off' || 'on' }}
-      GOPATH: C:\path\to\first\gopath;C:\path\to\second\gopath
+      GOPATH: C:\path\to\first\gopath
      
       # GOPATH: ${{ matrix.gopath }}${{ matrix.os == 'windows' && ';' || ':' }}${{ github.workspace }}
       GOARCH: amd64
