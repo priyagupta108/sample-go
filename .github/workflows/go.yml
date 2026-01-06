@@ -1,74 +1,27 @@
-# name: Setup FR-478
-# on: push 
+name: Setup FR-478
+on: push 
 
-# jobs:
-#   build:
-#     runs-on: ${{ matrix.os }}
-#     strategy:
-#       matrix:
-#         os: [ubuntu-latest, macos-latest, windows-latest]
-#     steps:
-#       - uses: actions/checkout@v6
-
-#       - name: Setup Go
-#         id: setup-go
-#         uses: priyagupta108/setup-go@gomod-cache
-#         with:
-#           go-version: '1.24'
-#           cache-dependency-path: "**/*.sum"
-
-#       - name: Download modules
-#         run: go mod download
-
-#       - name: Build
-#         run: go build ./...
-
-name: Run Tests
-on:
-  push:
-  
-permissions:
-  contents: read
 jobs:
-  test:
+  build:
+    runs-on: ${{ matrix.os }}
     strategy:
-      fail-fast: false 
-      max-parallel: 16
       matrix:
-        os: [macos, ubuntu, windows]
-        go: ["1.20", "1.22", "1.24"]
-        include:
-          - os: macos
-            gopath: /Users/runner/go
-            gocache: /Users/runner/Library/Caches/go-build
-          - os: ubuntu
-            gopath: /home/runner/go
-            gocache: /home/runner/.cache/go-build
-          - os: windows
-            gopath: C:\Users\runneradmin\go
-            gocache: C:\Users\runneradmin\AppData\Local\go-build
-
-    name: ${{ matrix.os }} @ Go ${{ matrix.go }}
-    runs-on: ${{ matrix.os }}-latest
-    env:
-      GO111MODULE: ${{ matrix.go < '1.22' && 'off' || 'on' }}
-      GOPATH: C:\path\to\first\gopath
-     
-      # GOPATH: ${{ matrix.gopath }}${{ matrix.os == 'windows' && ';' || ':' }}${{ github.workspace }}
-      GOARCH: amd64
-      CGO_ENABLED: 1
-      WORKDIR: src/github.com/eudore/eudore/
-      PACKAGES: github.com/eudore/eudore,github.com/eudore/eudore/middleware
-    defaults:
-      run:
-        working-directory: ${{ env.WORKDIR }}
+        os: [ubuntu-latest, macos-latest, windows-latest]
     steps:
-      - uses: actions/checkout@v4
-        with:
-          path: ${{ env.WORKDIR }}
+      - uses: actions/checkout@v6
 
-      - uses: actions/setup-go@v6
+      - name: Setup Go
+        id: setup-go
+        uses: priyagupta108/setup-go@gomod-cache
         with:
-          go-version: ${{ matrix.go }}
-          cache: false
-          
+          go-version: |
+            1.22
+            1.24
+          cache-dependency-path: "**/*.sum"
+
+      - name: Download modules
+        run: go mod download
+
+      - name: Build
+        run: go build ./...
+
