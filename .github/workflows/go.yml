@@ -12,7 +12,7 @@ jobs:
 
       - name: Setup Go
         id: setup-go
-        uses: priyagupta108/setup-go@gomod-cache
+        uses: priyagupta108/setup-go@cache-gomod
         with:
           go-version: 1.25
 
