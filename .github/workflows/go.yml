@@ -1,6 +1,7 @@
 name: Setup FR-478
 on: push 
 
+
 # jobs:
 #   build:
 #     runs-on: ${{ matrix.os }}
@@ -21,8 +22,7 @@ on: push
 
 #       - name: Build
 #         run: go build ./...
-
-  jobs:
+jobs:
     build:
       runs-on: ${{ matrix.os }}
       strategy:
