@@ -28,20 +28,6 @@ jobs:
           go-download-base-url: 'https://aka.ms/golang/release/latest'
           cache: false
 
-  # NEGATIVE: major.minor with a base URL that doesn't support listing => constructed filename likely not found
-  # This is the "dangerous edge" in the PR.
-  major_minor_without_listing_should_fail:
-    runs-on: ubuntu-latest
-    continue-on-error: true
-    steps:
-      - uses: actions/checkout@v6
-      - name: Expect failure (1.25 without listing)
-        uses: gdams/setup-go@msgo
-        with:
-          go-version: '1.25'
-          go-download-base-url: 'https://aka.ms/golang/release/latest'
-          cache: false
-
   # NEGATIVE-ish: check-latest with custom URL should NOT resolve latest; it should just proceed with provided spec.
   # This job should PASS but is verifying the "unsupported check-latest" behavior.
   check_latest_is_ignored:

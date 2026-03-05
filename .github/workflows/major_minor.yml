@@ -1,0 +1,17 @@
+name: major_minor-download
+on: [push]
+
+jobs:
+  major_minor:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v6
+      - name: Expect failure (1.25 without listing)
+        uses: gdams/setup-go@msgo
+        with:
+          go-version: '1.21'
+          go-download-base-url: 'https://aka.ms/golang/release/latest'
+       
+
+  
