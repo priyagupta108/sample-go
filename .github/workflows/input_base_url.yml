@@ -24,7 +24,7 @@ jobs:
 
           # special case: windows-11-arm uses 1.22.x (NOT 1.25.0)
           - os: windows-11-arm
-            go-version: "1.22.0" # change to the exact patch you need (e.g. 1.22.8)
+            go-version: "1.22.12" # change to the exact patch you need (e.g. 1.22.8)
 
     steps:
       - uses: actions/checkout@v6
