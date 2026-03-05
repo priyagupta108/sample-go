@@ -1,4 +1,4 @@
-name: custom-go-download-positive
+name: trailing_slash
 on: [push]
 
 jobs:

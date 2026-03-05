@@ -1,4 +1,4 @@
-name: custom-go-download-positive
+name: input_overrides_env
 on: [push]
 
 jobs:
@@ -6,14 +6,18 @@ jobs:
   # POSITIVE: input overrides env var
   input_overrides_env:
     name: input overrides env var
-    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest, windows-11-arm, macos-15-intel, ubuntu-24.04-arm]
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v6
       - uses: gdams/setup-go@msgo
         env:
           GO_DOWNLOAD_BASE_URL: 'https://example.invalid/should-not-be-used'
         with:
-          go-version: '1.25.0'
+          go-version: ${{ matrix.os == 'windows-11-arm' && '1.22.0' || '1.25.0' }}
           go-download-base-url: 'https://aka.ms/golang/release/latest'
       - run: go version
 
