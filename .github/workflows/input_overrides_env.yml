@@ -1,0 +1,20 @@
+name: custom-go-download-positive
+on: [push]
+
+jobs:
+
+  # POSITIVE: input overrides env var
+  input_overrides_env:
+    name: input overrides env var
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: gdams/setup-go@msgo
+        env:
+          GO_DOWNLOAD_BASE_URL: 'https://example.invalid/should-not-be-used'
+        with:
+          go-version: '1.25.0'
+          go-download-base-url: 'https://aka.ms/golang/release/latest'
+      - run: go version
+
+ 
