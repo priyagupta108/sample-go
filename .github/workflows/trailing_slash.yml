@@ -14,4 +14,3 @@ jobs:
           go-version: '1.25.0'
           go-download-base-url: 'https://aka.ms/golang/release/latest/'
       - run: go version
-

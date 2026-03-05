@@ -17,7 +17,7 @@ jobs:
         env:
           GO_DOWNLOAD_BASE_URL: 'https://example.invalid/should-not-be-used'
         with:
-          go-version: ${{ matrix.os == 'windows-11-arm' && '1.22.12' || '1.25.0' }}
+          go-version: ${{ matrix.os == 'windows-11-arm' && '1.26.0' || '1.25.0' }}
           go-download-base-url: 'https://aka.ms/golang/release/latest'
       - run: go version
 
