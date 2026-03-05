@@ -13,4 +13,5 @@ jobs:
           go-version: '1.20'
           go-download-base-url: 'https://aka.ms/golang/release/latest'  
 
-  
+      - name: Check Go version
+        run: go version
