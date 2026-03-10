@@ -1,288 +1,208 @@
-# name: token-protected-mirror-e2e
-# on:
-#   workflow_dispatch:
-#   push:
-
-# jobs:
-#   with_token_should_succeed:
-#     runs-on: ubuntu-latest
-#     steps:
-#       - uses: actions/checkout@v6
-
-#       - name: Prepare mirror content + protected server
-#         shell: bash
-#         run: |
-#           set -euxo pipefail
-#           mkdir -p mirror
-
-#           GO_VER="1.23.4"
-#           FILE="go${GO_VER}.linux-amd64.tar.gz"
-
-#           curl -fsSL -o "mirror/${FILE}" "https://go.dev/dl/${FILE}"
-
-#           cat > mirror/listing.json <<JSON
-#           [
-#             {
-#               "version": "go${GO_VER}",
-#               "stable": true,
-#               "files": [
-#                 {
-#                   "filename": "${FILE}",
-#                   "os": "linux",
-#                   "arch": "amd64",
-#                   "kind": "archive"
-#                 }
-#               ]
-#             }
-#           ]
-#           JSON
-
-#           cat > mirror/server.py <<'PY'
-#           import os
-#           from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
-#           from urllib.parse import urlparse, parse_qs
-
-#           REQUIRED = os.environ.get("MIRROR_TOKEN", "")
-
-#           def authorized(handler):
-#               auth = handler.headers.get("Authorization", "")
-#               # Enforce: Authorization: Bearer <token>
-#               return bool(REQUIRED) and auth == f"Bearer {REQUIRED}"
-
-#           class Handler(SimpleHTTPRequestHandler):
-#               def do_GET(self):
-#                   auth = self.headers.get("Authorization", "")
-#                   print(f"[mirror] path={self.path} auth={auth!r}", flush=True)
-
-#                   if not authorized(self):
-#                       self.send_response(401)
-#                       self.send_header("Content-Type", "text/plain")
-#                       self.end_headers()
-#                       self.wfile.write(b"unauthorized\n")
-#                       return
-
-#                   u = urlparse(self.path)
-#                   qs = parse_qs(u.query)
-
-#                   # Listing endpoint
-#                   if u.path == "/" and qs.get("mode") == ["json"] and qs.get("include") == ["all"]:
-#                       self.send_response(200)
-#                       self.send_header("Content-Type", "application/json")
-#                       self.end_headers()
-#                       with open("listing.json", "rb") as f:
-#                           self.wfile.write(f.read())
-#                       return
-
-#                   return super().do_GET()
-
-#           ThreadingHTTPServer(("127.0.0.1", 8000), Handler).serve_forever()
-#           PY
-
-#       - name: Start protected mirror server
-#         shell: bash
-#         run: |
-#           set -euxo pipefail
-#           cd mirror
-#           MIRROR_TOKEN='test-token-123' python3 server.py > /tmp/mirror.log 2>&1 &
-#           echo $! > /tmp/mirror.pid
-
-#       - name: Setup Go from protected mirror (token) - SHOULD SUCCEED
-#         # Use the PR author's branch (this is PR head repo/branch per PR metadata)
-#         uses: gdams/setup-go@msgo
-#         with:
-#           go-version: "1.23.4"
-#           go-download-base-url: "http://127.0.0.1:8000"
-#           token: "test-token-123"
-#           cache: false
-#           check-latest: false
-
-#       - name: Verify Go
-#         run: go version
-
-#       - name: Show mirror log
-#         if: always()
-#         shell: bash
-#         run: |
-#           set -euxo pipefail
-#           echo "----- /tmp/mirror.log -----"
-#           tail -n +1 /tmp/mirror.log || true
-
-#   without_token_should_fail:
-#     runs-on: ubuntu-latest
-#     continue-on-error: true
-#     steps:
-#       - uses: actions/checkout@v6
-
-#       - name: Prepare mirror content + protected server
-#         shell: bash
-#         run: |
-#           set -euxo pipefail
-#           mkdir -p mirror
-#           GO_VER="1.23.4"
-#           FILE="go${GO_VER}.linux-amd64.tar.gz"
-#           curl -fsSL -o "mirror/${FILE}" "https://go.dev/dl/${FILE}"
-
-#           cat > mirror/listing.json <<JSON
-#           [
-#             {
-#               "version": "go${GO_VER}",
-#               "stable": true,
-#               "files": [
-#                 {
-#                   "filename": "${FILE}",
-#                   "os": "linux",
-#                   "arch": "amd64",
-#                   "kind": "archive"
-#                 }
-#               ]
-#             }
-#           ]
-#           JSON
-
-#           cat > mirror/server.py <<'PY'
-#           import os
-#           from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
-#           from urllib.parse import urlparse, parse_qs
-
-#           REQUIRED = os.environ.get("MIRROR_TOKEN", "")
-
-#           def authorized(handler):
-#               auth = handler.headers.get("Authorization", "")
-#               return bool(REQUIRED) and auth == f"Bearer {REQUIRED}"
-
-#           class Handler(SimpleHTTPRequestHandler):
-#               def do_GET(self):
-#                   auth = self.headers.get("Authorization", "")
-#                   print(f"[mirror] path={self.path} auth={auth!r}", flush=True)
-
-#                   if not authorized(self):
-#                       self.send_response(401)
-#                       self.send_header("Content-Type", "text/plain")
-#                       self.end_headers()
-#                       self.wfile.write(b"unauthorized\n")
-#                       return
-
-#                   u = urlparse(self.path)
-#                   qs = parse_qs(u.query)
-#                   if u.path == "/" and qs.get("mode") == ["json"] and qs.get("include") == ["all"]:
-#                       self.send_response(200)
-#                       self.send_header("Content-Type", "application/json")
-#                       self.end_headers()
-#                       with open("listing.json", "rb") as f:
-#                           self.wfile.write(f.read())
-#                       return
-
-#                   return super().do_GET()
-
-#           ThreadingHTTPServer(("127.0.0.1", 8000), Handler).serve_forever()
-#           PY
-
-#       - name: Start protected mirror server
-#         shell: bash
-#         run: |
-#           set -euxo pipefail
-#           cd mirror
-#           MIRROR_TOKEN='test-token-123' python3 server.py > /tmp/mirror.log 2>&1 &
-#           echo $! > /tmp/mirror.pid
-
-#       - name: Setup Go from protected mirror (NO token) - SHOULD FAIL
-#         uses: gdams/setup-go@msgo
-#         with:
-#           go-version: "1.23.4"
-#           go-download-base-url: "http://127.0.0.1:8000"
-#           cache: false
-#           check-latest: false
-
-#       - name: Show mirror log
-#         if: always()
-#         shell: bash
-#         run: |
-#           set -euxo pipefail
-#           echo "----- /tmp/mirror.log -----"
-#           tail -n +1 /tmp/mirror.log || true
-
-name: Test setup-go custom download URL + dummy token (passing)
-
+name: token-protected-mirror-e2e
 on:
+  workflow_dispatch:
   push:
 
 jobs:
-  test:
+  with_token_should_succeed:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout (for local action usage)
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
-      - name: Start local mirror server (logs Authorization; serves real tarball)
+      - name: Prepare mirror content + protected server
         shell: bash
         run: |
-          cat > server.py << 'PY'
-          import http.server, socketserver, urllib.request
+          set -euxo pipefail
+          mkdir -p mirror
 
-          GO_URL = "https://go.dev/dl/go1.25.0.linux-amd64.tar.gz"
+          GO_VER="1.23.4"
+          FILE="go${GO_VER}.linux-amd64.tar.gz"
 
-          class Handler(http.server.BaseHTTPRequestHandler):
+          curl -fsSL -o "mirror/${FILE}" "https://go.dev/dl/${FILE}"
+
+          cat > mirror/listing.json <<JSON
+          [
+            {
+              "version": "go${GO_VER}",
+              "stable": true,
+              "files": [
+                {
+                  "filename": "${FILE}",
+                  "os": "linux",
+                  "arch": "amd64",
+                  "kind": "archive"
+                }
+              ]
+            }
+          ]
+          JSON
+
+          cat > mirror/server.py <<'PY'
+          import os
+          from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
+          from urllib.parse import urlparse, parse_qs
+
+          REQUIRED = os.environ.get("MIRROR_TOKEN", "")
+
+          def authorized(handler):
+              auth = handler.headers.get("Authorization", "")
+              if not REQUIRED:
+                  return False
+              # PR #721 sends: Authorization: token <token>
+              # Also accept Bearer for compatibility.
+              return auth in (f"token {REQUIRED}", f"Bearer {REQUIRED}")
+
+          class Handler(SimpleHTTPRequestHandler):
               def do_GET(self):
-                  auth = self.headers.get('Authorization')
-                  print(f"REQ path={self.path} Authorization={auth}", flush=True)
+                  auth = self.headers.get("Authorization", "")
+                  print(f"[mirror] path={self.path} auth={auth!r}", flush=True)
 
-                  # Force setup-go to fall back to direct-download URL construction
-                  if self.path.startswith('/?mode=json'):
-                      self.send_response(404)
+                  if not authorized(self):
+                      self.send_response(401)
+                      self.send_header("Content-Type", "text/plain")
                       self.end_headers()
-                      self.wfile.write(b'not found')
+                      self.wfile.write(b"unauthorized\n")
                       return
 
-                  if self.path == '/go1.25.0.linux-amd64.tar.gz':
+                  u = urlparse(self.path)
+                  qs = parse_qs(u.query)
+
+                  # Listing endpoint
+                  if u.path == "/" and qs.get("mode") == ["json"] and qs.get("include") == ["all"]:
                       self.send_response(200)
-                      self.send_header('Content-Type', 'application/gzip')
+                      self.send_header("Content-Type", "application/json")
                       self.end_headers()
-                      with urllib.request.urlopen(GO_URL) as r:
-                          while True:
-                              chunk = r.read(1024 * 1024)
-                              if not chunk:
-                                  break
-                              self.wfile.write(chunk)
+                      with open("listing.json", "rb") as f:
+                          self.wfile.write(f.read())
                       return
 
-                  self.send_response(404)
-                  self.end_headers()
-                  self.wfile.write(b'not found')
+                  return super().do_GET()
 
-              def log_message(self, format, *args):
-                  return
-
-          port = 8123
-          with socketserver.TCPServer(("127.0.0.1", port), Handler) as httpd:
-              print(f"Listening on http://127.0.0.1:{port}", flush=True)
-              httpd.serve_forever()
+          ThreadingHTTPServer(("127.0.0.1", 8000), Handler).serve_forever()
           PY
 
-          python3 server.py > server.log 2>&1 &
-          echo $! > server.pid
+      - name: Start protected mirror server
+        shell: bash
+        run: |
+          set -euxo pipefail
+          cd mirror
+          MIRROR_TOKEN='test-token-123' python3 server.py > /tmp/mirror.log 2>&1 &
+          echo $! > /tmp/mirror.pid
 
-      - name: Run setup-go against local server (dummy token)
+      - name: Setup Go from protected mirror (token) - SHOULD SUCCEED
         uses: gdams/setup-go@msgo
         with:
-          go-version: "1.25.0"
-          go-download-base-url: "http://127.0.0.1:8123"
-          token: "dummy-token"
+          go-version: "1.23.4"
+          go-download-base-url: "http://127.0.0.1:8000"
+          token: "test-token-123"
           cache: false
+          check-latest: false
 
-      - name: Go version (should succeed)
+      - name: Verify Go
         run: go version
 
-      - name: Dump server log (verify header forwarding)
+      - name: Show mirror log
         if: always()
         shell: bash
         run: |
-          echo "==== server.log ===="
-          cat server.log || true
-          echo
-          echo "Look for: Authorization=token dummy-token"
+          set -euxo pipefail
+          echo "----- /tmp/mirror.log -----"
+          tail -n +1 /tmp/mirror.log || true
 
-      - name: Stop server
+  without_token_should_fail:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Prepare mirror content + protected server
+        shell: bash
+        run: |
+          set -euxo pipefail
+          mkdir -p mirror
+
+          GO_VER="1.23.4"
+          FILE="go${GO_VER}.linux-amd64.tar.gz"
+
+          curl -fsSL -o "mirror/${FILE}" "https://go.dev/dl/${FILE}"
+
+          cat > mirror/listing.json <<JSON
+          [
+            {
+              "version": "go${GO_VER}",
+              "stable": true,
+              "files": [
+                {
+                  "filename": "${FILE}",
+                  "os": "linux",
+                  "arch": "amd64",
+                  "kind": "archive"
+                }
+              ]
+            }
+          ]
+          JSON
+
+          cat > mirror/server.py <<'PY'
+          import os
+          from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
+          from urllib.parse import urlparse, parse_qs
+
+          REQUIRED = os.environ.get("MIRROR_TOKEN", "")
+
+          def authorized(handler):
+              auth = handler.headers.get("Authorization", "")
+              if not REQUIRED:
+                  return False
+              return auth in (f"token {REQUIRED}", f"Bearer {REQUIRED}")
+
+          class Handler(SimpleHTTPRequestHandler):
+              def do_GET(self):
+                  auth = self.headers.get("Authorization", "")
+                  print(f"[mirror] path={self.path} auth={auth!r}", flush=True)
+
+                  if not authorized(self):
+                      self.send_response(401)
+                      self.send_header("Content-Type", "text/plain")
+                      self.end_headers()
+                      self.wfile.write(b"unauthorized\n")
+                      return
+
+                  u = urlparse(self.path)
+                  qs = parse_qs(u.query)
+                  if u.path == "/" and qs.get("mode") == ["json"] and qs.get("include") == ["all"]:
+                      self.send_response(200)
+                      self.send_header("Content-Type", "application/json")
+                      self.end_headers()
+                      with open("listing.json", "rb") as f:
+                          self.wfile.write(f.read())
+                      return
+
+                  return super().do_GET()
+
+          ThreadingHTTPServer(("127.0.0.1", 8000), Handler).serve_forever()
+          PY
+
+      - name: Start protected mirror server
+        shell: bash
+        run: |
+          set -euxo pipefail
+          cd mirror
+          MIRROR_TOKEN='test-token-123' python3 server.py > /tmp/mirror.log 2>&1 &
+          echo $! > /tmp/mirror.pid
+
+      - name: Setup Go from protected mirror (NO token) - SHOULD FAIL
+        uses: gdams/setup-go@msgo
+        with:
+          go-version: "1.23.4"
+          go-download-base-url: "http://127.0.0.1:8000"
+          cache: false
+          check-latest: false
+
+      - name: Show mirror log
         if: always()
         shell: bash
         run: |
-          kill "$(cat server.pid)" || true
+          set -euxo pipefail
+          echo "----- /tmp/mirror.log -----"
+          tail -n +1 /tmp/mirror.log || true
