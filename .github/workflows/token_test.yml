@@ -204,7 +204,7 @@
 name: Test setup-go custom download URL + dummy token
 
 on:
-  workflow_dispatch:
+  push:
 
 jobs:
   test:
