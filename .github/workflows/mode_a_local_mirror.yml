@@ -1,21 +1,19 @@
-name: custom-go-download-mode-b-direct-fallback
+name: force-version-listing-message
 on:
-  workflow_dispatch:
-  push:
+  push: 
 
 jobs:
-  mode_b_local_mirror:
+  force_message:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
 
-      - name: Prepare mirror content (NO JSON listing endpoint)
+      - name: Prepare mirror (tarball exists, listing always 404)
         shell: bash
         run: |
           set -euxo pipefail
           mkdir -p mirror
-          curl -fsSL -o mirror/go1.23.4.linux-amd64.tar.gz \
-            https://go.dev/dl/go1.23.4.linux-amd64.tar.gz
+          curl -fsSL -o mirror/go1.23.4.linux-amd64.tar.gz https://go.dev/dl/go1.23.4.linux-amd64.tar.gz
 
           cat > mirror/server.py <<'PY'
           from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
@@ -27,7 +25,7 @@ jobs:
                   qs = parse_qs(u.query)
                   print(f"[mirror] path={self.path}", flush=True)
 
-                  # Explicitly simulate "no JSON listing API"
+                  # Force listing to fail
                   if u.path == "/" and qs.get("mode") == ["json"] and qs.get("include") == ["all"]:
                       self.send_response(404)
                       self.end_headers()
@@ -39,7 +37,7 @@ jobs:
           ThreadingHTTPServer(("127.0.0.1", 8001), Handler).serve_forever()
           PY
 
-      - name: Start mirror server (listing returns 404)
+      - name: Start mirror server
         shell: bash
         run: |
           set -euxo pipefail
@@ -47,24 +45,18 @@ jobs:
           python3 server.py > /tmp/mirror.log 2>&1 &
           echo $! > /tmp/mirror.pid
 
-      - name: Setup Go (should fall back to direct URL)
+      - name: Setup Go (use non-pinned version to force listing)
         uses: gdams/setup-go@msgo
         with:
-          go-version: "1.23.4"
+          go-version: "1.23"             # IMPORTANT: not 1.23.4
           go-download-base-url: "http://127.0.0.1:8001"
           cache: false
-         
+          check-latest: false
 
-      - run: go version
-
-      - name: Dump mirror log (prove fallback happened)
+      - name: Dump mirror log
         if: always()
         shell: bash
         run: |
           set -euxo pipefail
           echo "----- /tmp/mirror.log -----"
           tail -n +1 /tmp/mirror.log || true
-          echo
-          echo "EXPECT BOTH:"
-          echo " - path=/?mode=json&include=all  (404)"
-          echo " - path=/go1.23.4.linux-amd64.tar.gz"
