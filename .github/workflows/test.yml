@@ -11,8 +11,8 @@ jobs:
 
       - name: setup-go (PR)
         id: setupgo
-        # uses: lmvysakh/setup-go@fileexists_resolution
-        uses: actions/setup-go@v6
+        uses: lmvysakh/setup-go@fileexists_resolution
+        # uses: actions/setup-go@v6
         with:
           go-version: "1.22.x"
           cache: true
