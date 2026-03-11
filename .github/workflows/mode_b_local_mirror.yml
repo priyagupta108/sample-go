@@ -25,7 +25,7 @@ jobs:
           python3 -m http.server 8001 --bind 127.0.0.1 >/tmp/http.log 2>&1 &
           echo $! > /tmp/http.pid
       - name: Setup Go (should fall back to direct URL)
-        uses: gdams/setup-go@fa4cd7679b12367c0e65f85c856af6fef3051da9
+        uses: gdams/setup-go@78af96c1885b2270a86c2a62d9746c607d9a00dd
         with:
           go-version: '1.23.4'
           go-download-base-url: 'http://127.0.0.1:8001'
