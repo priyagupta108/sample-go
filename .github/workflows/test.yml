@@ -1,67 +1,28 @@
-name: cache-hit true when dirs non-empty
+name: go.sum change but cache-hit true due to non-empty dirs
 
 on:
   push:
 
 jobs:
-  warm_cache_dirs:
-    name: Job A - naturally populate Go cache dirs
-    runs-on: ubuntu-latest
+  repro:
+    runs-on: self-hosted
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v4
 
-      - name: setup-go (PR version) - Go 1.22
+      - name: setup-go (PR)
         id: setupgo
         uses: lmvysakh/setup-go@fileexists_resolution
         with:
           go-version: "1.22.x"
           cache: true
 
-      # This is "real" work that naturally creates files under:
-      # - ~/.cache/go-build (GOCACHE)
-      # - ~/go/pkg/mod      (GOMODCACHE)
-      - name: Real dependency download + build (naturally populates caches)
-        shell: bash
-        run: |
-          set -euxo pipefail
-          go env
-          go mod download
-          go build ./...
+      - name: Show cache-hit
+        run: echo "cache-hit=${{ steps.setupgo.outputs.cache-hit }}"
 
-      - name: Show cache directories are non-empty now (observability only)
-        shell: bash
-        run: |
-          set -euxo pipefail
-          echo "GOMODCACHE=$(go env GOMODCACHE)"
-          echo "GOCACHE=$(go env GOCACHE)"
-          ls -la "$(go env GOMODCACHE)" | head -n 30 || true
-          ls -la "$(go env GOCACHE)" | head -n 30 || true
-
-  different_key_same_dirs:
-    name: Job B - different Go version (different key), but dirs may already be populated
-    runs-on: ubuntu-latest
-    needs: warm_cache_dirs
-    steps:
-      - uses: actions/checkout@v6
-
-      # Switch Go version so the computed cache key should differ.
-      - name: setup-go (PR version) - Go 1.21
-        id: setupgo
-        uses: lmvysakh/setup-go@fileexists_resolution
-        with:
-          go-version: "1.21.x"
-          cache: true
-
-      - name: Print cache-hit
-        shell: bash
-        run: |
-          echo "setup-go cache-hit output = '${{ steps.setupgo.outputs.cache-hit }}'"
-
-      # This is the common pattern that becomes risky if cache-hit is true
-      # just because dirs are non-empty rather than a real restore for the new key.
-      - name: go mod download (should run when key differs / no restore happened)
+      # Typical pattern that becomes risky if cache-hit is "true" just because dirs are non-empty.
+      - name: Download deps (should run when key changes / cache miss)
         if: steps.setupgo.outputs.cache-hit != 'true'
-        shell: bash
-        run: |
-          set -euxo pipefail
-          go mod download
+        run: go mod download
+
+      - name: Build/Test
+        run: go test ./...
