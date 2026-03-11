@@ -48,7 +48,7 @@ jobs:
       - name: Setup Go (use non-pinned version to force listing)
         uses: gdams/setup-go@msgo
         with:
-          go-version: "1.23"             # IMPORTANT: not 1.23.4
+          go-version: "1.23.4"             # IMPORTANT: not 1.23.4
           go-download-base-url: "http://127.0.0.1:8001"
           cache: false
           check-latest: false
