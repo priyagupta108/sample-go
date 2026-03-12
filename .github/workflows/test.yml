@@ -1,4 +1,4 @@
-name: go.sum change but cache-hit true due to non-empty dirs
+name: Test cache-hit
 
 on:
   push:
@@ -17,7 +17,6 @@ jobs:
           go-version: "1.22.x"
           cache: true
 
-     
       # Typical pattern that becomes risky if cache-hit is "true" just because dirs are non-empty.
       - name: Download deps (should run when key changes / cache miss)
         if: steps.setupgo.outputs.cache-hit != 'true'
