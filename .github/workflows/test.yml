@@ -17,35 +17,7 @@ jobs:
           go-version: "1.22.x"
           cache: true
 
-      - name: Show cache-hit
-        run: echo "cache-hit=${{ steps.setupgo.outputs.cache-hit }}"
-
-      - name: Print Go cache directories + whether they are populated
-        shell: bash
-        run: |
-          set -euxo pipefail
-
-          echo "GITHUB_WORKSPACE=$GITHUB_WORKSPACE"
-          echo "PWD=$(pwd)"
-
-          echo "Go version:"
-          go version
-
-          echo "Go env:"
-          echo "GOMODCACHE=$(go env GOMODCACHE)"
-          echo "GOCACHE=$(go env GOCACHE)"
-          echo "GOPATH=$(go env GOPATH)"
-
-          echo "Listing GOMODCACHE:"
-          ls -la "$(go env GOMODCACHE)" | head -n 50 || true
-
-          echo "Listing GOCACHE:"
-          ls -la "$(go env GOCACHE)" | head -n 50 || true
-
-          echo "Counts:"
-          echo "GOMODCACHE entries: $(ls -1A "$(go env GOMODCACHE)" 2>/dev/null | wc -l || echo 0)"
-          echo "GOCACHE entries:    $(ls -1A "$(go env GOCACHE)" 2>/dev/null | wc -l || echo 0)"
-
+     
       # Typical pattern that becomes risky if cache-hit is "true" just because dirs are non-empty.
       - name: Download deps (should run when key changes / cache miss)
         if: steps.setupgo.outputs.cache-hit != 'true'
