@@ -17,7 +17,7 @@ jobs:
           go-version: "1.22.x"
           cache: true
       - name: Show first cache-hit
-        run: echo "first cache-hit=${{ steps.setup1.outputs.cache-hit }}"
+        run: echo "first cache-hit=${{ steps.setupgo.outputs.cache-hit }}"
       # Typical pattern that becomes risky if cache-hit is "true" just because dirs are non-empty.
       - name: Download deps
         if: steps.setupgo.outputs.cache-hit != 'true'
