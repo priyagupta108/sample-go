@@ -1,96 +1,27 @@
-name: Reproduce error 722
 
-on:
-  workflow_dispatch:
-  push:
-    branches: [main]
-  pull_request:
-    branches: [main]
+name: Setup GO
+on: push
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-      - uses: actions/setup-go@v6
-        with:
-          go-version-file: go.mod
-
-      - name: Sync dependencies and download modules
-        run: |
-          go mod tidy
-          go mod download
-      
+    name: Test Job
+    
+    steps: 
+      - name: Checkout code
+        uses: actions/checkout@v6
       - name: Setup go
-        id: setup-go
         uses: actions/setup-go@v6
         with:
-          go-version-file: go.mod
-          cache: false
-          
-      # Capture Go cache locations
-      - name: Set Go cache variables (Linux/macOS)
-        if: runner.os != 'Windows'
-        run: |
-          echo "GO_MOD_CACHE=$(go env GOMODCACHE)" >> $GITHUB_ENV
-          echo "GO_BUILD_CACHE=$(go env GOCACHE)" >> $GITHUB_ENV
-      - name: Set Go cache variables (Windows)
-        if: runner.os == 'Windows'
-        shell: pwsh
-        run: |
-          echo "GO_MOD_CACHE=$(go env GOMODCACHE)" | Out-File $env:GITHUB_ENV -Append
-          echo "GO_BUILD_CACHE=$(go env GOCACHE)"   | Out-File $env:GITHUB_ENV -Append
-      # Normalize runner.arch to lowercase to ensure consistent cache keys
-      - name: Normalize runner architecture (Linux/macOS)
-        if: runner.os != 'Windows'
-        shell: bash
-        run: echo "ARCH=$(echo '${{ runner.arch }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
-      - name: Normalize runner architecture (Windows)
-        if: runner.os == 'Windows'
-        shell: pwsh
-        run: |
-          $arch = "${{ runner.arch }}".ToLower()
-          echo "ARCH=$arch" | Out-File $env:GITHUB_ENV -Append
-      - name: Set cache OS suffix for Linux
-        if: runner.os == 'Linux'
-        shell: bash
-        run: echo "CACHE_OS_SUFFIX=$ImageOS-" >> $GITHUB_ENV
-      - name: Restore Go cache
-        id: go-cache
-        uses: actions/cache/restore@v5
+          go-version: '1.25.2'
+      - run: go mod download   
+      - name: Check Go version
+        run: go version
+      - name: Setup go
+        uses: actions/setup-go@v6
         with:
-          path: |
-            ${{ env.GO_MOD_CACHE }}
-            ${{ env.GO_BUILD_CACHE }}
-          key: setup-go-${{ runner.os }}-${{ env.ARCH }}-${{ env.CACHE_OS_SUFFIX }}go-${{ steps.setup-go.outputs.go-version }}-${{ hashFiles('**/go.mod') }}
-      - name: Download modules
-        run: go mod download  
-        
-# name: Setup GO
-# on: push
-
-# jobs:
-#   build:
-#     runs-on: ubuntu-latest
-#     name: Test Job
-    
-#     steps: 
-#       - name: Checkout code
-#         uses: actions/checkout@v6
-#       - name: Setup go
-#         uses: actions/setup-go@v6
-#         with:
-#           go-version: '1.25.1'
-#           cache: true
-#       - run: go mod download   
-#       - name: Check Go version
-#         run: go version
-#       - name: Setup go
-#         uses: actions/setup-go@v6
-#         with:
-#           go-version: '1.25.1'
-#           cache: true  
-#       - run: go mod download  
+          go-version: '1.25.2'
+      - run: go mod download  
 # jobs:
 #   build:
 #     runs-on: ubuntu-latest
