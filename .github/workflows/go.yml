@@ -9,42 +9,33 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - uses: actions/setup-go@v6
         with:
           go-version: '1.25.1'
           cache: false
-
-      # Ensure there is something to cache
-      - run: go mod download
-
-      # Save once (so the next restore actually has an archive to extract)
       - name: Save Go cache
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             ~/go/pkg/mod
             ~/.cache/go-build
           key: ${{ runner.os }}-go-double-${{ github.sha }}
-
-      # Restore #1 into the same locations (will typically be a hit in this job because of the exact key)
-      - name: Restore Go cache (1)
-        uses: actions/cache/restore@v4
+      - run: go mod download
+      
+      - uses: actions/setup-go@v6
+        with:
+          go-version: '1.25.1'
+          cache: false
+      - name: Save Go cache
+        uses: actions/cache@v5
         with:
           path: |
             ~/go/pkg/mod
             ~/.cache/go-build
           key: ${{ runner.os }}-go-double-${{ github.sha }}
-
-      # Restore #2 again into the same locations (this is the "double restore" that can trigger tar collisions)
-      - name: Restore Go cache (2)
-        uses: actions/cache/restore@v4
-        with:
-          path: |
-            ~/go/pkg/mod
-            ~/.cache/go-build
-          key: ${{ runner.os }}-go-double-${{ github.sha }}
+      - run: go mod download
 # jobs:
 #   build:
 #     runs-on: ubuntu-latest
