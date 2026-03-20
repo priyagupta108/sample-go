@@ -1,29 +1,72 @@
 
-name: Setup GO
+# name: Setup GO
+# on: push
+name: Repro actions-cache double restore
 on: push
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    name: Test Job
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v6
+        with:
+          go-version: '1.25.1'
+          cache: false
+
+      # Ensure there is something to cache
+      - run: go mod download
+
+      # Save once (so the next restore actually has an archive to extract)
+      - name: Save Go cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/go/pkg/mod
+            ~/.cache/go-build
+          key: ${{ runner.os }}-go-double-${{ github.sha }}
+
+      # Restore #1 into the same locations (will typically be a hit in this job because of the exact key)
+      - name: Restore Go cache (1)
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            ~/go/pkg/mod
+            ~/.cache/go-build
+          key: ${{ runner.os }}-go-double-${{ github.sha }}
+
+      # Restore #2 again into the same locations (this is the "double restore" that can trigger tar collisions)
+      - name: Restore Go cache (2)
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            ~/go/pkg/mod
+            ~/.cache/go-build
+          key: ${{ runner.os }}-go-double-${{ github.sha }}
+# jobs:
+#   build:
+#     runs-on: ubuntu-latest
+#     name: Test Job
     
-    steps: 
-      - name: Checkout code
-        uses: actions/checkout@v6
-      - name: Setup go
-        uses: actions/setup-go@v6
-        with:
-          go-version: '1.25.1'
-          cache : true
-      - run: go mod download   
-      - name: Check Go version
-        run: go version
-      - name: Setup go
-        uses: actions/setup-go@v6
-        with:
-          go-version: '1.25.1'
-          cache : false
-      - run: go mod download  
+#     steps: 
+#       - name: Checkout code
+#         uses: actions/checkout@v6
+#       - name: Setup go
+#         uses: actions/setup-go@v6
+#         with:
+#           go-version: '1.25.1'
+#           cache : true
+#       - run: go mod download   
+#       - name: Check Go version
+#         run: go version
+#       - name: Setup go
+#         uses: actions/setup-go@v6
+#         with:
+#           go-version: '1.25.1'
+#           cache : false
+#       - run: go mod download  
 # jobs:
 #   build:
 #     runs-on: ubuntu-latest
