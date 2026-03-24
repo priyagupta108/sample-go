@@ -4,60 +4,60 @@
 name: Repro actions-cache double restore
 on: push
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v6
-
-      - uses: actions/setup-go@v6
-        with:
-          go-version: '1.25.1'
-          cache: false
-      - name: Save Go cache
-        uses: actions/cache@v5
-        with:
-          path: |
-            ~/go/pkg/mod
-            ~/.cache/go-build
-          key: ${{ runner.os }}-go-double-${{ github.sha }}
-      - run: go mod download
-      
-      - uses: actions/setup-go@v6
-        with:
-          go-version: '1.25.1'
-          cache: false
-      - name: Save Go cache
-        uses: actions/cache@v5
-        with:
-          path: |
-            ~/go/pkg/mod
-            ~/.cache/go-build
-          key: ${{ runner.os }}-go-double-${{ github.sha }}
-      - run: go mod download
 # jobs:
 #   build:
 #     runs-on: ubuntu-latest
-#     name: Test Job
+
+#     steps:
+#       - uses: actions/checkout@v6
+
+#       - uses: actions/setup-go@v6
+#         with:
+#           go-version: '1.25.1'
+#           cache: false
+#       - name: Save Go cache
+#         uses: actions/cache@v5
+#         with:
+#           path: |
+#             ~/go/pkg/mod
+#             ~/.cache/go-build
+#           key: ${{ runner.os }}-go-double-${{ github.sha }}
+#       - run: go mod download
+      
+#       - uses: actions/setup-go@v6
+#         with:
+#           go-version: '1.25.1'
+#           cache: false
+#       - name: Save Go cache
+#         uses: actions/cache@v5
+#         with:
+#           path: |
+#             ~/go/pkg/mod
+#             ~/.cache/go-build
+#           key: ${{ runner.os }}-go-double-${{ github.sha }}
+#       - run: go mod download
+jobs:
+  build:
+    runs-on: self-hosted
+    name: Test Job
     
-#     steps: 
-#       - name: Checkout code
-#         uses: actions/checkout@v6
-#       - name: Setup go
-#         uses: actions/setup-go@v6
-#         with:
-#           go-version: '1.25.1'
-#           cache : true
-#       - run: go mod download   
-#       - name: Check Go version
-#         run: go version
-#       - name: Setup go
-#         uses: actions/setup-go@v6
-#         with:
-#           go-version: '1.25.1'
-#           cache : false
-#       - run: go mod download  
+    steps: 
+      - name: Checkout code
+        uses: actions/checkout@v6
+      - name: Setup go
+        uses: actions/setup-go@v6
+        with:
+          go-version: '1.25.1'
+          cache : true
+      - run: go mod download   
+      - name: Check Go version
+        run: go version
+      - name: Setup go
+        uses: actions/setup-go@v6
+        with:
+          go-version: '1.25.1'
+          cache : false
+      - run: go mod download  
 # jobs:
 #   build:
 #     runs-on: ubuntu-latest
