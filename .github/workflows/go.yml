@@ -37,7 +37,7 @@ on: push
 #       - run: go mod download
 jobs:
   build:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     name: Test Job
     
     steps: 
@@ -46,17 +46,13 @@ jobs:
       - name: Setup go
         uses: actions/setup-go@v6
         with:
-          go-version: '1.25.1'
+          go-version: '1.9'
           cache : true
-      - run: go mod download   
+      # - run: go mod download   
       - name: Check Go version
         run: go version
-      - name: Setup go
-        uses: actions/setup-go@v6
-        with:
-          go-version: '1.25.1'
-          cache : false
-      - run: go mod download  
+     
+      # - run: go mod download  
 # jobs:
 #   build:
 #     runs-on: ubuntu-latest
